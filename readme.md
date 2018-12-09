@@ -2,23 +2,23 @@
 
 ## Concept
 
-We want to track tasks in physical space. Information about these tasks exiost in several
+We want to track tasks in physical space. Information about these tasks exist in several
 software systems (databases) . 
     
 Databases can be thought of spaces as well (dimensions of table, 
-row, some of which are continous, some discrete)
+row, some of which are continuous, some discrete)
     
-therefore we can unify phyiscal and virtual space into a single notion with two types. 
-    
+therefore we can unify physical and virtual space into a single notion with two types (P, V)
+
 Each task has normal predecessors in physical space, but also in virtual space.  
 A task in physical space can be represented 1-to-1 in virtual space, but also as 1to many and many to 1 in vspace. 
-The virtual space is All Database schemas which hold precursor information to a task 
+The virtual space is All Database schemas which hold related information to a task 
     
-Each task has an equivelant 'reaction' or 'double-entry' in the managers court 
+Each task has an equivalent 'reaction' or 'double-entry' in the managers court (?)
 
-- The target is to be able to explore completion of a project in physical and virutal space. 
+- The target is to be able to explore completion of a project in physical and virtual space. 
     
-- The model should be amenable to probobalistic analysis for prediction and such 
+- The model should be amenable to probablistic analysis for prediction and such 
     
 
 ## Structure
@@ -33,7 +33,7 @@ Components:
     - this may have to be a pure ML model, but maybe not necessary - either way
         
 4) Mechanism for MLing characteristics of space to match data 
-     - aka - I have some RFIS, connected to blah in my model. How to attach full tree
+     - aka - I have some RFIS, connected to blah in my model. How to connect them? 
 
 ## Interface
 
@@ -45,23 +45,24 @@ Components:
     
 Each task can be drilled into eg Roughing
     
-        Room    |  Task      | procurement | submittal | install
-        -------+-------------+-------------+-----------+----------
-        lobby  |   Roughing  |   100%      | 80 %      |   40 %
-    
+        Room    |  Task      | procurement | submittal | install  | ...
+        -------+-------------+-------------+-----------+----------+-----
+        lobby  |   Roughing  |   100%      | 80 %      |   40 %   | ...
+        ...
+        
 Or pivoted out: 
     
-        Room   |  Concrete   |            Roughing                | ...
+        Room   |  Concrete   |            Roughing                |  ...
                |             | procurement | submittal | install  |
         -------+-------------+-------------+----------------------+-----
-        lobby  |    100%     |   100%      | 80 %      | 40 %     |
+        lobby  |    100%     |   100%      | 80 %      | 40 %     |  ...
     
     
 2) view things in space as some sort of stacked layer thing on the 3D model/drawings.
 
 
 
-## Properties 
+## Properties and notions
 
 Some ideas for starting assumptions:
 
@@ -72,13 +73,32 @@ Some ideas for starting assumptions:
     
 3) Task based scheduling stuff is fundamentally a graph. 
 
-## Questions 
+4) P space is geometric - perhaps the abstraction is just intervals in dim=3
+
+5) There should be some notion of symmetry between tasks different  parties must do. 
+while a task is technically assigned to some party, it is implicit that some other party is doing some management of it.
+(eg a vendor doing and install, the super is overseeing). 
+This is the way the world works, and we are trying to model the world. 
+This notion should be useful in practical notification delivery, but also in maintaining provenance, 
+as ALMOST ALL paths a task can take have successors in the real world. 
+
+In fact, for any party on a project, there is ONLY ONE task-record in a path which does not have a successor 
+(when they finish their part in the job), though traditional scheduling abstracts this idea away in some cases.
+
+
+## Example and pseudo code 
     
 1) is there any use to to thinking about vspace as a manifold, and do some trickery 
 to clump physical dimensions onto it, and think of each task as some of the dimensions of that space?
 
-2) There is also a space of things that happen outside of software - human space: H
-
+2) Definitions
+    In addition to spaces P,V is also a space of things that happen outside of software - human space: H
+    (R) 'record' is an entry in a database that should be monitored 
+    (p) 'path' is connected group of records.
+    (G) the graph holding everything. It must be a directed graph. 
+        # todo are updates to a record represented as loops ? that would be kind of nice, then there would have to be
+        bookkeeping for order of actions, unless we assume all actions are idempotent, which i dont think is case.
+    
 3) Example - Change order approval
     1) some event happens in H implying a change in some Existing task in T in P.
     2) a record is create (pco = Rp) is created in V, connected to another record (cco = Rc) in V. 
@@ -117,9 +137,9 @@ how would this be reprsented, and gathered concretely?
             update_metrics(R'', T' P')
 
         # procedures used 
-        def relate_V :: abstract interface
-        def relate_P :: abstract interface
-        def scan_dbs :: abstract interface
+        def relate_V :: abstract interface  # creates records for ties of existing {V} a record
+        def relate_P :: abstract interface  # creates records for ties of existing {P} a record
+        def scan_dbs :: abstract interface  # returns a stream of new records
         def update_metrics :: 
         
     3)  record is updated, but we are dealing with same record
